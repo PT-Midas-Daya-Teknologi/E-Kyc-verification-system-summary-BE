@@ -23,6 +23,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
     private final ResponseUtil respUtil;
     private final ObjectMapper objectMapper;
+
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         CustomError customError = CustomError

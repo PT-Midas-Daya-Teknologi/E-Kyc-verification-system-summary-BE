@@ -47,11 +47,10 @@ public class AdminUserSessionServiceImpl implements AdminUserSessionService {
     }
 
     @Override
-    public void destroySession(UUID sessionId) throws Exception {
+    public void destroySession(UUID sessionId) {
         log.info("Inside destroySession()");
 
-        AdminUserSession adminUserSession = adminUserSessionRepository.findByIdAndIsActiveTrue(sessionId)
-                        .orElseThrow(() -> new Exception("Invalid session"));
+        AdminUserSession adminUserSession = adminUserSessionRepository.findByIdAndIsActiveTrue(sessionId);
         adminUserSession.setIsActive(false);
         adminUserSession.setExpiry(LocalDateTime.now());
 

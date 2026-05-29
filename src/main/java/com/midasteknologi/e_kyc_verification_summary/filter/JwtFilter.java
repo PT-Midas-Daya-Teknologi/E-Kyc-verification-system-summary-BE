@@ -47,8 +47,6 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.info("Inside doFilterInternal of [{}]", getClass().getName());
 
-        String requestURI = request.getRequestURI();
-        log.info("list {}", String.join(",", eKycVerificationSummaryConfig.getAllowedUrls()));
         if (eKycVerificationSummaryConfig.getAllowedUrls().contains(request.getRequestURI())) {
             filterChain.doFilter(request, response);
             return;

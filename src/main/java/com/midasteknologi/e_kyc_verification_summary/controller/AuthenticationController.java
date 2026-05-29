@@ -28,13 +28,4 @@ public class AuthenticationController {
                 )
         );
     }
-
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
-        return ResponseEntity.ok(
-                respUtil.buildBody(
-                        authenticationService.logout(request, response)
-                )
-        );
-    }
 }

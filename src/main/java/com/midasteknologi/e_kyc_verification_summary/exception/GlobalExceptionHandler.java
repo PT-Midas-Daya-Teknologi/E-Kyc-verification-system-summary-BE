@@ -89,24 +89,24 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 );
     }
 
-    @ExceptionHandler(value = Exception.class)
-    private ResponseEntity<Object> handleException(Exception ex) {
-        logger.info("----- GlobalExceptionHandler handling handleException -----");
-        logger.error("Exception ", ex);
-
-        return ResponseEntity
-                .internalServerError()
-                .body(
-                        responseUtil.buildErrors(
-                                CustomError
-                                        .builder()
-                                        .code(GlobalConstant.INTERNAL_SERVER_ERROR_CODE)
-                                        .type(GlobalConstant.INTERNAL_SERVER_ERROR_TYPE)
-                                        .message(GlobalConstant.INTERNAL_SERVER_ERROR_MESSAGE)
-                                        .build()
-                        )
-                );
-    }
+//    @ExceptionHandler(value = Exception.class)
+//    private ResponseEntity<Object> handleException(Exception ex) {
+//        logger.info("----- GlobalExceptionHandler handling handleException -----");
+//        logger.error("Exception ", ex);
+//
+//        return ResponseEntity
+//                .internalServerError()
+//                .body(
+//                        responseUtil.buildErrors(
+//                                CustomError
+//                                        .builder()
+//                                        .code(GlobalConstant.INTERNAL_SERVER_ERROR_CODE)
+//                                        .type(GlobalConstant.INTERNAL_SERVER_ERROR_TYPE)
+//                                        .message(GlobalConstant.INTERNAL_SERVER_ERROR_MESSAGE)
+//                                        .build()
+//                        )
+//                );
+//    }
 
     @ExceptionHandler(value = CustomException.class)
     private ResponseEntity<Object> handleCustomException(Exception ex) {

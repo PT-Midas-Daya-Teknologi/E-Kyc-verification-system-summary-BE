@@ -30,7 +30,6 @@ public class UserInfoService implements UserDetailsService {
             throw new UsernameNotFoundException("User not found with email: " + username);
         }
 
-        log.info("password from db {}", userInfoDetailsOptional.get().getPassword());
         return new User(userInfoDetailsOptional.get().getEmail(), userInfoDetailsOptional.get().getPassword(), List.of(new GrantedAuthority() {
             @Override
             public @Nullable String getAuthority() {

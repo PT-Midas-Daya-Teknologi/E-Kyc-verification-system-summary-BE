@@ -3,9 +3,11 @@ package com.midasteknologi.e_kyc_verification_summary.config;
 import com.midasteknologi.e_kyc_verification_summary.exception.CustomAuthenticationEntryPoint;
 import com.midasteknologi.e_kyc_verification_summary.filter.JwtFilter;
 import com.midasteknologi.e_kyc_verification_summary.provider.CustomAuthenticationProvider;
+import com.midasteknologi.e_kyc_verification_summary.provider.CustomLogoutHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,6 +16,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.context.SecurityContextRepository;
 
 @Configuration
@@ -22,6 +25,7 @@ import org.springframework.security.web.context.SecurityContextRepository;
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
+    private final CustomLogoutHandler customLogoutHandler;
     private final SecurityContextRepository securityContextRepository;
     private final CustomAuthenticationProvider customAuthenticationProvider;
     private final EKycVerificationSummaryConfig eKycVerificationSummaryConfig;
@@ -35,7 +39,9 @@ public class SecurityConfig {
                         .requestMatchers("/authenticate", "/v3/api-docs", "/swagger-ui/**", "/swagger-ui.html", "/swagger**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                .logout(Customizer.withDefaults())
+                .logout(httpSecurityLogoutConfigurer ->
+                        httpSecurityLogoutConfigurer.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
+                                .addLogoutHandler(customLogoutHandler))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(httpSecurityExceptionHandlingConfigurer ->
                         httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(customAuthenticationEntryPoint))

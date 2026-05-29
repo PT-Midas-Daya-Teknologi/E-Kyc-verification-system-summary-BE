@@ -11,7 +11,7 @@ public interface AdminUserSessionService {
 
     AdminUserSession updateSession(AdminUserSession adminUserSession);
 
-    void destroySession(UUID sessionId) throws Exception;
+    void destroySession(UUID sessionId);
 
     boolean validateSession(UUID sessionId);
 }

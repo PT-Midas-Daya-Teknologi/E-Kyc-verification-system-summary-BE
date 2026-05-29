@@ -3,7 +3,6 @@ package com.midasteknologi.e_kyc_verification_summary.service.impl;
 import com.midasteknologi.e_kyc_verification_summary.constants.GlobalConstant;
 import com.midasteknologi.e_kyc_verification_summary.dto.request.AuthenticationRequest;
 import com.midasteknologi.e_kyc_verification_summary.dto.response.AuthenticationResponse;
-import com.midasteknologi.e_kyc_verification_summary.dto.response.LogoutResponse;
 import com.midasteknologi.e_kyc_verification_summary.entity.AdminUser;
 import com.midasteknologi.e_kyc_verification_summary.entity.AdminUserSession;
 import com.midasteknologi.e_kyc_verification_summary.exception.CustomException;
@@ -17,16 +16,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -60,6 +57,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 AdminUserSession adminUserSession = adminUserSessionService.createSession(adminUser);
                 String token = jwtService.generateAccessToken(adminUser, adminUserSession.getId());
                 adminUserSession.setAccessToken(token);
+                adminUserSession = adminUserSessionService.updateSession(adminUserSession);
+
                 SystemContext.setContext(GlobalConstant.SESSION_ID, adminUserSession.getId());
                 SecurityContext securityContext = SecurityContextHolder.getContext();
                 securityContext.setAuthentication(authentication);
@@ -72,7 +71,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             } else {
                 throw new UsernameNotFoundException("Invalid credentials");
             }
-        } catch (CustomException e) {
+        } catch (CustomException | BadCredentialsException | UsernameNotFoundException e) {
             log.error("Exception: ", e);
             throw e;
         } catch (Exception e) {
@@ -86,23 +85,5 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         log.info("Exiting authenticate()");
         return authenticationResponse;
-    }
-
-    @Override
-    public LogoutResponse logout(HttpServletRequest request, HttpServletResponse response) {
-        log.info("Inside logout()");
-        try {
-            SecurityContext securityContext = SecurityContextHolder.getContext();
-            if (securityContext.getAuthentication() != null) {
-                new SecurityContextLogoutHandler().logout(request, response, securityContext.getAuthentication());
-            }
-
-            adminUserSessionService.destroySession((UUID) SystemContext.getContext(GlobalConstant.SESSION_ID));
-        } catch (Exception e) {
-            log.error("Exception: ", e);
-        }
-
-        log.info("Exiting logout()");
-        return null;
     }
 }
