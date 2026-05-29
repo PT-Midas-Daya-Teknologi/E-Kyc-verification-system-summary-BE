@@ -50,7 +50,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     ));
 
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(adminUser.getEmail(), adminUser.getPassword())
+                    new UsernamePasswordAuthenticationToken(adminUser.getEmail(), authenticationRequest.getPassword())
             );
 
             if (authentication.isAuthenticated()) {

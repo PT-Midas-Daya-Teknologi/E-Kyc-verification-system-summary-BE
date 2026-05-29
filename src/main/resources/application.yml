@@ -107,3 +107,5 @@ config:
     - /openapi/dev/v3/api-docs
     - /openapi/dev/swagger-ui.html
     - /openapi/dev/swagger-ui/index.html
+  secret-key: e-kyc-secret-key
+  iv-key: e-kyc-iv-key

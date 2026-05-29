@@ -26,6 +26,12 @@ public class EKycVerificationSummaryConfig {
     @NotEmpty
     private List<String> allowedUrls;
 
+    @NotBlank
+    private String secretKey;
+
+    @NotBlank
+    private String ivKey;
+
     @Data
     public static class JwtConfig {
 

@@ -6,9 +6,11 @@ import com.midasteknologi.e_kyc_verification_summary.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -89,24 +91,24 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 );
     }
 
-//    @ExceptionHandler(value = Exception.class)
-//    private ResponseEntity<Object> handleException(Exception ex) {
-//        logger.info("----- GlobalExceptionHandler handling handleException -----");
-//        logger.error("Exception ", ex);
-//
-//        return ResponseEntity
-//                .internalServerError()
-//                .body(
-//                        responseUtil.buildErrors(
-//                                CustomError
-//                                        .builder()
-//                                        .code(GlobalConstant.INTERNAL_SERVER_ERROR_CODE)
-//                                        .type(GlobalConstant.INTERNAL_SERVER_ERROR_TYPE)
-//                                        .message(GlobalConstant.INTERNAL_SERVER_ERROR_MESSAGE)
-//                                        .build()
-//                        )
-//                );
-//    }
+    @ExceptionHandler(value = BadCredentialsException.class)
+    private ResponseEntity<Object> handleBadCredentialsException(Exception ex) {
+        logger.info("----- GlobalExceptionHandler handling handleException -----");
+        logger.error("Exception ", ex);
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(
+                        responseUtil.buildErrors(
+                                CustomError
+                                        .builder()
+                                        .code(GlobalConstant.BAD_CREDENTIALS_ERROR_CODE)
+                                        .type(GlobalConstant.BAD_CREDENTIALS_ERROR_TYPE)
+                                        .message(GlobalConstant.BAD_CREDENTIALS_ERROR_MESSAGE)
+                                        .build()
+                        )
+                );
+    }
 
     @ExceptionHandler(value = CustomException.class)
     private ResponseEntity<Object> handleCustomException(Exception ex) {

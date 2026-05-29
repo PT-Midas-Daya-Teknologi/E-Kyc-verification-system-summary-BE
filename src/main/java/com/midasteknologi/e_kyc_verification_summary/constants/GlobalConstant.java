@@ -17,5 +17,9 @@ public class GlobalConstant {
     public static final String UNAUTHORIZE_ERROR_TYPE = "ERR0401";
     public static final String UNAUTHORIZE_ERROR_MESSAGE = "Unauthorize";
 
+    public static final String BAD_CREDENTIALS_ERROR_CODE = "ERR0400";
+    public static final String BAD_CREDENTIALS_ERROR_TYPE = "ERR0400";
+    public static final String BAD_CREDENTIALS_ERROR_MESSAGE = "Bad Credentials";
+
     public static final String SESSION_ID = "sessionId";
 }
