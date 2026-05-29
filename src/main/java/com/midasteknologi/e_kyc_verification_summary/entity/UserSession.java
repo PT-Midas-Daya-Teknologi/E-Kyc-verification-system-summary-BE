@@ -1,0 +1,38 @@
+package com.midasteknologi.e_kyc_verification_summary.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Table;
+import lombok.Data;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Entity
+@Table(name = "user_session")
+@Data
+public class UserSession {
+
+    @Id
+    private UUID id;
+
+    private Long  userId;
+
+    @Column(name = "document_id")
+    @JoinColumn(name = "document_id", columnDefinition = "id")
+    private UserDocument userDocument;
+
+    private UUID videoId;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "json")
+    private String attempts;
+
+    private LocalDateTime sessionExpiry;
+
+    private Boolean isActive;
+}
