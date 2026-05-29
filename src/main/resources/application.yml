@@ -61,6 +61,12 @@ rest:
   config:
     timeout-millis: 30000
 
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: false
+
 ---
 environment: dev
 ---
@@ -100,3 +106,4 @@ config:
     - /openapi/dev/authenticate
     - /openapi/dev/v3/api-docs
     - /openapi/dev/swagger-ui.html
+    - /openapi/dev/swagger-ui/index.html
