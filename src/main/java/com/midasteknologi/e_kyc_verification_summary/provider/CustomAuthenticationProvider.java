@@ -54,7 +54,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         if (adminUserOptional.isEmpty()) {
             throw new BadCredentialsException("Invalid Credentials");
         }
-        
+
         String plainTextPassword = EncryptionUtil.decryptAes(adminUserOptional.get().getPassword(), eKycVerificationSummaryConfig.getSecretKey(), eKycVerificationSummaryConfig.getIvKey());
         if (plainTextPassword == null) {
             throw new BadCredentialsException("Invalid Credentials");

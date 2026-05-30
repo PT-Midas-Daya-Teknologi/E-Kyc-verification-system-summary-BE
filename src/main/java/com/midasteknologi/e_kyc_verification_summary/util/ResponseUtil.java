@@ -22,7 +22,7 @@ public class ResponseUtil {
     public CustomResponse buildErrors(Object errors) {
         return CustomResponse
                 .builder()
-                .success(true)
+                .success(false)
                 .responseTime(LocalDateTime.now())
                 .errors(errors)
                 .build();
