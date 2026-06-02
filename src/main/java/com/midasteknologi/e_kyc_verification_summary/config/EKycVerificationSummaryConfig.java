@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -32,6 +33,10 @@ public class EKycVerificationSummaryConfig {
     @NotBlank
     private String ivKey;
 
+    @Valid
+    @NotNull
+    private CorsConfig corsConfig;
+
     @Data
     public static class JwtConfig {
 
@@ -41,5 +46,25 @@ public class EKycVerificationSummaryConfig {
         @NotNull
         @PositiveOrZero
         private Long expiryInSeconds;
+    }
+
+    @Data
+    public static class CorsConfig {
+
+        @NotBlank
+        private String allowedOrigins;
+
+        @NotBlank
+        private String allowedMethods;
+
+        @NotBlank
+        private String allowedHeaders;
+
+        @NotNull
+        private Boolean allowedCredentials;
+
+        @NotNull
+        @Positive
+        private Long maxAge;
     }
 }
