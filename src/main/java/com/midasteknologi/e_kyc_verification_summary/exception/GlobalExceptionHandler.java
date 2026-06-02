@@ -3,6 +3,7 @@ package com.midasteknologi.e_kyc_verification_summary.exception;
 import com.midasteknologi.e_kyc_verification_summary.constants.GlobalConstant;
 import com.midasteknologi.e_kyc_verification_summary.dto.response.CustomError;
 import com.midasteknologi.e_kyc_verification_summary.util.ResponseUtil;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
@@ -110,8 +111,27 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 );
     }
 
+    @ExceptionHandler(value = ExpiredJwtException.class)
+    private ResponseEntity<Object> handleExpiredJwtException(ExpiredJwtException ex) {
+        logger.info("----- GlobalExceptionHandler handling handleExpiredJwtException -----");
+        logger.error("Exception ", ex);
+
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(
+                        responseUtil.buildErrors(
+                                CustomError
+                                        .builder()
+                                        .code(GlobalConstant.UNAUTHORIZE_ERROR_CODE)
+                                        .type(GlobalConstant.UNAUTHORIZE_ERROR_MESSAGE)
+                                        .message(GlobalConstant.UNAUTHORIZE_ERROR_TYPE)
+                                        .build()
+                        )
+                );
+    }
+
     @ExceptionHandler(value = CustomException.class)
-    private ResponseEntity<Object> handleCustomException(Exception ex) {
+    private ResponseEntity<Object> handleCustomException(CustomException ex) {
         logger.info("----- GlobalExceptionHandler handling handleException -----");
         logger.error("Exception ", ex);
 
