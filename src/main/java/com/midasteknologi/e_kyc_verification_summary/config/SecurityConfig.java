@@ -28,7 +28,6 @@ public class SecurityConfig {
     private final CustomLogoutHandler customLogoutHandler;
     private final SecurityContextRepository securityContextRepository;
     private final CustomAuthenticationProvider customAuthenticationProvider;
-    private final EKycVerificationSummaryConfig eKycVerificationSummaryConfig;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     @Bean
@@ -50,16 +49,6 @@ public class SecurityConfig {
 
         return httpSecurity.build();
     }
-
-//    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
-
-//    @Bean
-//    public AuthenticationProvider authenticationProvider() {
-//        return customAuthenticationProvider;
-//    }
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity httpSecurity) {

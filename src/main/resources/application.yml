@@ -109,3 +109,9 @@ config:
     - /openapi/dev/swagger-ui/index.html
   secret-key: e-kyc-secret-key
   iv-key: e-kyc-iv-key
+  cors-config:
+    allowed-origins: http://localhost:3001
+    allowed-methods: "*"
+    allowed-headers: "*"
+    allowed-credentials: true
+    max-age: 300
