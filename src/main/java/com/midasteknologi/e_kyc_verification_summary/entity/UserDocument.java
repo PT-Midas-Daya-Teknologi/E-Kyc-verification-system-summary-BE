@@ -31,6 +31,9 @@ public class UserDocument extends BaseEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column
+    private String name;
+
     @Column(name = "session_id")
     private UUID sessionId;
 

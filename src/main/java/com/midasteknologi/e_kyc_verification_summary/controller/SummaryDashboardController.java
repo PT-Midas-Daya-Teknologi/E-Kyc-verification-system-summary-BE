@@ -2,6 +2,7 @@ package com.midasteknologi.e_kyc_verification_summary.controller;
 
 import com.midasteknologi.e_kyc_verification_summary.dto.request.PaginatedRequest;
 import com.midasteknologi.e_kyc_verification_summary.dto.request.UserSessionSummaryRequest;
+import com.midasteknologi.e_kyc_verification_summary.exception.CustomException;
 import com.midasteknologi.e_kyc_verification_summary.service.SummaryService;
 import com.midasteknologi.e_kyc_verification_summary.util.ResponseUtil;
 import jakarta.validation.Valid;
@@ -21,7 +22,7 @@ public class SummaryDashboardController {
     private final SummaryService summaryService;
 
     @PostMapping("/summary")
-    public ResponseEntity<?> getSummary(@Valid @RequestBody PaginatedRequest paginatedRequest) {
+    public ResponseEntity<?> getSummary(@Valid @RequestBody PaginatedRequest paginatedRequest) throws CustomException {
         return ResponseEntity.ok(
                 responseUtil.buildBody(
                         summaryService.getSummary(paginatedRequest)
@@ -30,7 +31,7 @@ public class SummaryDashboardController {
     }
 
     @PostMapping("/summary/session")
-    public ResponseEntity<?> getSummarySession(@Valid @RequestBody UserSessionSummaryRequest userSessionSummaryRequest) {
+    public ResponseEntity<?> getSummarySession(@Valid @RequestBody UserSessionSummaryRequest userSessionSummaryRequest) throws CustomException {
         return ResponseEntity.ok(
                 responseUtil.buildBody(
                         summaryService.getSummarySession(userSessionSummaryRequest)

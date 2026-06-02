@@ -15,11 +15,22 @@ public class UserSessionSummaryResponse {
 
     private UUID sessionId;
 
-    private UUID documentId;
+    private UserDocumentResponse userDocumentResponse;
 
     private UUID videoId;
 
-    private String ocrData;
-
     private String attempts;
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserDocumentResponse {
+
+        private UUID documentId;
+
+        private String documentName;
+
+        private String ocrData;
+    }
 }
