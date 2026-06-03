@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -22,8 +23,8 @@ public class UserSession {
 
     private Long  userId;
 
-    @Column(name = "document_id")
-    @JoinColumn(name = "document_id", columnDefinition = "id")
+    @OneToOne()
+    @JoinColumn(name = "document_id")
     private UserDocument userDocument;
 
     private UUID videoId;
