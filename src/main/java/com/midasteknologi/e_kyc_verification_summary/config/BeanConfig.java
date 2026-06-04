@@ -7,8 +7,9 @@ import org.springframework.security.web.context.DelegatingSecurityContextReposit
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @RequiredArgsConstructor
@@ -25,17 +26,16 @@ public class BeanConfig {
     }
 
     @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOrigins(eKycVerificationSummaryConfig.getCorsConfig().getAllowedOrigins())
-                        .allowedMethods(eKycVerificationSummaryConfig.getCorsConfig().getAllowedMethods())
-                        .allowedHeaders(eKycVerificationSummaryConfig.getCorsConfig().getAllowedHeaders())
-                        .allowCredentials(eKycVerificationSummaryConfig.getCorsConfig().getAllowedCredentials())
-                        .maxAge(eKycVerificationSummaryConfig.getCorsConfig().getMaxAge());
-            }
-        };
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.setAllowedOrigins(eKycVerificationSummaryConfig.getCorsConfig().getAllowedOrigins());
+        corsConfiguration.setAllowedMethods(eKycVerificationSummaryConfig.getCorsConfig().getAllowedMethods());
+        corsConfiguration.setAllowedHeaders(eKycVerificationSummaryConfig.getCorsConfig().getAllowedHeaders());
+        corsConfiguration.setAllowCredentials(eKycVerificationSummaryConfig.getCorsConfig().getAllowedCredentials());
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfiguration);
+
+        return source;
     }
 }

@@ -51,14 +51,14 @@ public class EKycVerificationSummaryConfig {
     @Data
     public static class CorsConfig {
 
-        @NotBlank
-        private String allowedOrigins;
+        @NotNull
+        private List<String> allowedOrigins;
 
-        @NotBlank
-        private String allowedMethods;
+        @NotNull
+        private List<String> allowedMethods;
 
-        @NotBlank
-        private String allowedHeaders;
+        @NotNull
+        private List<String> allowedHeaders;
 
         @NotNull
         private Boolean allowedCredentials;
