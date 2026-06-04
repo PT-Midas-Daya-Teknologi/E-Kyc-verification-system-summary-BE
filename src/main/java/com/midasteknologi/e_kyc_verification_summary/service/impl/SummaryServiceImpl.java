@@ -6,8 +6,10 @@ import com.midasteknologi.e_kyc_verification_summary.dto.request.UserSessionSumm
 import com.midasteknologi.e_kyc_verification_summary.dto.response.PaginatedResponse;
 import com.midasteknologi.e_kyc_verification_summary.dto.response.UserSessionSummaryResponse;
 import com.midasteknologi.e_kyc_verification_summary.entity.User;
+import com.midasteknologi.e_kyc_verification_summary.entity.UserDocument;
 import com.midasteknologi.e_kyc_verification_summary.entity.UserSession;
 import com.midasteknologi.e_kyc_verification_summary.exception.CustomException;
+import com.midasteknologi.e_kyc_verification_summary.repository.UserDocumentRepository;
 import com.midasteknologi.e_kyc_verification_summary.repository.UserRepository;
 import com.midasteknologi.e_kyc_verification_summary.repository.UserSessionRepository;
 import com.midasteknologi.e_kyc_verification_summary.service.SummaryService;
@@ -16,7 +18,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -25,6 +32,78 @@ public class SummaryServiceImpl implements SummaryService {
 
     private final UserRepository userRepository;
     private final UserSessionRepository userSessionRepository;
+    private final UserDocumentRepository userDocumentRepository;
+
+    @Override
+    public ResponseEntity<byte[]> getDocument(UUID documentId) throws CustomException {
+        log.info("Inside getDocument() for documentId: {}", documentId);
+
+        try {
+            UserDocument document = userDocumentRepository.findById(documentId)
+                    .orElseThrow(() -> new CustomException(
+                            GlobalConstant.NOT_FOUND_ERROR_CODE,
+                            GlobalConstant.NOT_FOUND_ERROR_MESSAGE,
+                            GlobalConstant.NOT_FOUND_ERROR_TYPE
+                    ));
+
+            String filename = (document.getName() != null && !document.getName().isBlank())
+                    ? document.getName()
+                    : documentId.toString();
+
+            String contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+
+            try {
+                String type = document.getType();
+
+                // Use type only if it is a valid MIME type (contains '/')
+                if (type != null && !type.isBlank() && type.contains("/")) {
+                    contentType = type;
+                } else {
+                    // Detect MIME type from file name
+                    contentType = java.nio.file.Files.probeContentType(
+                            java.nio.file.Paths.get(filename)
+                    );
+
+                    if (contentType == null) {
+                        String lowerFileName = filename.toLowerCase();
+
+                        if (lowerFileName.endsWith(".jpg") || lowerFileName.endsWith(".jpeg")) {
+                            contentType = MediaType.IMAGE_JPEG_VALUE;
+                        } else if (lowerFileName.endsWith(".png")) {
+                            contentType = MediaType.IMAGE_PNG_VALUE;
+                        } else if (lowerFileName.endsWith(".gif")) {
+                            contentType = MediaType.IMAGE_GIF_VALUE;
+                        } else if (lowerFileName.endsWith(".webp")) {
+                            contentType = "image/webp";
+                        } else if (lowerFileName.endsWith(".pdf")) {
+                            contentType = MediaType.APPLICATION_PDF_VALUE;
+                        } else {
+                            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                log.warn("Could not determine content type. Using application/octet-stream", e);
+            }
+
+            log.info("Returning document with contentType: {}", contentType);
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"")
+                    .body(document.getContent());
+
+        } catch (CustomException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Exception in getDocument()", e);
+            throw new CustomException(
+                    GlobalConstant.INTERNAL_SERVER_ERROR_CODE,
+                    GlobalConstant.INTERNAL_SERVER_ERROR_MESSAGE,
+                    GlobalConstant.INTERNAL_SERVER_ERROR_TYPE
+            );
+        }
+    }
 
     @Override
     public PaginatedResponse getSummary(PaginatedRequest paginatedRequest) throws CustomException {
