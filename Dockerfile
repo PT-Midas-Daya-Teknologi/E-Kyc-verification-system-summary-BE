@@ -1,0 +1,33 @@
+FROM eclipse-temurin:21-jre AS builder
+
+ARG JAR_FILE=/target/*.jar
+
+WORKDIR /extracted
+
+COPY ${JAR_FILE} app.jar
+
+RUN java -Djarmode=layertools -jar app.jar extract
+
+FROM eclipse-temurin:21-jre
+
+WORKDIR application
+
+COPY --from=builder extracted/dependencies/ ./
+
+COPY --from=builder extracted/spring-boot-loader/ ./
+
+COPY --from=builder extracted/snapshot-dependencies/ ./
+
+COPY --from=builder extracted/application/ ./
+
+EXPOSE 8080
+
+ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]
+
+#FROM eclipse-temurin:17-jre-focal
+#
+#EXPOSE 8080
+#
+#ADD target/*.jar app.jar
+#
+#ENTRYPOINT ["java", "-jar", "/app.jar"]
