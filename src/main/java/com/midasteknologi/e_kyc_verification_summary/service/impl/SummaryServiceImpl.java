@@ -6,8 +6,10 @@ import com.midasteknologi.e_kyc_verification_summary.dto.request.UserSessionSumm
 import com.midasteknologi.e_kyc_verification_summary.dto.response.PaginatedResponse;
 import com.midasteknologi.e_kyc_verification_summary.dto.response.UserSessionSummaryResponse;
 import com.midasteknologi.e_kyc_verification_summary.entity.User;
+import com.midasteknologi.e_kyc_verification_summary.entity.UserDocument;
 import com.midasteknologi.e_kyc_verification_summary.entity.UserSession;
 import com.midasteknologi.e_kyc_verification_summary.exception.CustomException;
+import com.midasteknologi.e_kyc_verification_summary.repository.UserDocumentRepository;
 import com.midasteknologi.e_kyc_verification_summary.repository.UserRepository;
 import com.midasteknologi.e_kyc_verification_summary.repository.UserSessionRepository;
 import com.midasteknologi.e_kyc_verification_summary.service.SummaryService;
@@ -16,7 +18,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -25,6 +32,67 @@ public class SummaryServiceImpl implements SummaryService {
 
     private final UserRepository userRepository;
     private final UserSessionRepository userSessionRepository;
+    private final UserDocumentRepository userDocumentRepository;
+
+    @Override
+    public ResponseEntity<byte[]> getDocument(UUID documentId) throws CustomException {
+        log.info("Inside getDocument() for documentId: {}", documentId);
+
+        try {
+            UserDocument document = userDocumentRepository.findById(documentId)
+                    .orElseThrow(() -> new CustomException(
+                            GlobalConstant.NOT_FOUND_ERROR_CODE,
+                            GlobalConstant.NOT_FOUND_ERROR_MESSAGE,
+                            GlobalConstant.NOT_FOUND_ERROR_TYPE
+                    ));
+
+            String filename = (document.getName() != null && !document.getName().isBlank())
+                    ? document.getName()
+                    : documentId.toString();
+
+            String contentType = java.nio.file.Files.probeContentType(
+                    java.nio.file.Paths.get(filename)
+            );
+
+            if (contentType == null) {
+                String extension = "";
+                int lastDotIndex = filename.lastIndexOf('.');
+
+                if (lastDotIndex > -1) {
+                    extension = filename.substring(lastDotIndex + 1).toLowerCase();
+                }
+
+                contentType = switch (extension) {
+                    case "jpg", "jpeg" -> MediaType.IMAGE_JPEG_VALUE;
+                    case "png" -> MediaType.IMAGE_PNG_VALUE;
+                    case "gif" -> MediaType.IMAGE_GIF_VALUE;
+                    case "webp" -> "image/webp";
+                    case "pdf" -> MediaType.APPLICATION_PDF_VALUE;
+                    default -> MediaType.APPLICATION_OCTET_STREAM_VALUE;
+                };
+            }
+
+            log.info("Returning document with contentType: {}", contentType);
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"")
+                    .body(document.getContent());
+
+        } catch (Exception e) {
+            log.error("Exception in getDocument()", e);
+
+            if (e instanceof CustomException customException) {
+                throw customException;
+            }
+
+            throw new CustomException(
+                    GlobalConstant.INTERNAL_SERVER_ERROR_CODE,
+                    GlobalConstant.INTERNAL_SERVER_ERROR_MESSAGE,
+                    GlobalConstant.INTERNAL_SERVER_ERROR_TYPE
+            );
+        }
+    }
 
     @Override
     public PaginatedResponse getSummary(PaginatedRequest paginatedRequest) throws CustomException {
