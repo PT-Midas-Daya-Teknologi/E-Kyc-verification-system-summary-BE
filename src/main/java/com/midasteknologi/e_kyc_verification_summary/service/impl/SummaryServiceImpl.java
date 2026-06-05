@@ -50,40 +50,26 @@ public class SummaryServiceImpl implements SummaryService {
                     ? document.getName()
                     : documentId.toString();
 
-            String contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+            String contentType = java.nio.file.Files.probeContentType(
+                    java.nio.file.Paths.get(filename)
+            );
 
-            try {
-                String type = document.getType();
+            if (contentType == null) {
+                String extension = "";
+                int lastDotIndex = filename.lastIndexOf('.');
 
-                // Use type only if it is a valid MIME type (contains '/')
-                if (type != null && !type.isBlank() && type.contains("/")) {
-                    contentType = type;
-                } else {
-                    // Detect MIME type from file name
-                    contentType = java.nio.file.Files.probeContentType(
-                            java.nio.file.Paths.get(filename)
-                    );
-
-                    if (contentType == null) {
-                        String lowerFileName = filename.toLowerCase();
-
-                        if (lowerFileName.endsWith(".jpg") || lowerFileName.endsWith(".jpeg")) {
-                            contentType = MediaType.IMAGE_JPEG_VALUE;
-                        } else if (lowerFileName.endsWith(".png")) {
-                            contentType = MediaType.IMAGE_PNG_VALUE;
-                        } else if (lowerFileName.endsWith(".gif")) {
-                            contentType = MediaType.IMAGE_GIF_VALUE;
-                        } else if (lowerFileName.endsWith(".webp")) {
-                            contentType = "image/webp";
-                        } else if (lowerFileName.endsWith(".pdf")) {
-                            contentType = MediaType.APPLICATION_PDF_VALUE;
-                        } else {
-                            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
-                        }
-                    }
+                if (lastDotIndex > -1) {
+                    extension = filename.substring(lastDotIndex + 1).toLowerCase();
                 }
-            } catch (Exception e) {
-                log.warn("Could not determine content type. Using application/octet-stream", e);
+
+                contentType = switch (extension) {
+                    case "jpg", "jpeg" -> MediaType.IMAGE_JPEG_VALUE;
+                    case "png" -> MediaType.IMAGE_PNG_VALUE;
+                    case "gif" -> MediaType.IMAGE_GIF_VALUE;
+                    case "webp" -> "image/webp";
+                    case "pdf" -> MediaType.APPLICATION_PDF_VALUE;
+                    default -> MediaType.APPLICATION_OCTET_STREAM_VALUE;
+                };
             }
 
             log.info("Returning document with contentType: {}", contentType);
@@ -93,10 +79,13 @@ public class SummaryServiceImpl implements SummaryService {
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"")
                     .body(document.getContent());
 
-        } catch (CustomException e) {
-            throw e;
         } catch (Exception e) {
             log.error("Exception in getDocument()", e);
+
+            if (e instanceof CustomException customException) {
+                throw customException;
+            }
+
             throw new CustomException(
                     GlobalConstant.INTERNAL_SERVER_ERROR_CODE,
                     GlobalConstant.INTERNAL_SERVER_ERROR_MESSAGE,
