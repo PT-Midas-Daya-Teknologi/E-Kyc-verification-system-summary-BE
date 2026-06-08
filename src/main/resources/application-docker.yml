@@ -61,6 +61,10 @@ rest:
   config:
     timeout-millis: 30000
 
+python:
+  service:
+    url: http://python-service:8000
+
 springdoc:
   api-docs:
     enabled: true

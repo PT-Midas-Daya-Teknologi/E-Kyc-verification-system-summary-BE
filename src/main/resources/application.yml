@@ -61,7 +61,9 @@ rest:
   config:
     timeout-millis: 30000
 
-springdoc:
+python:
+  service:
+    url: http://localhost:8000
   api-docs:
     enabled: true
   swagger-ui:
