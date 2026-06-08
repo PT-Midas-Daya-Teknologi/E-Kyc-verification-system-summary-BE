@@ -27,7 +27,9 @@ public class UserSession {
     @JoinColumn(name = "document_id")
     private UserDocument userDocument;
 
-    private UUID videoId;
+    @OneToOne()
+    @JoinColumn(name = "videoId")
+    private UserVideo userVideo;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "json")

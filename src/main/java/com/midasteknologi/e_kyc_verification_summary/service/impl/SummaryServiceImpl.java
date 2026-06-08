@@ -161,7 +161,14 @@ public class SummaryServiceImpl implements SummaryService {
                                                                     .build()
                                                             : null
                                             )
-                                            .videoId(userSession.getVideoId())
+                                            .userVideoResponse(
+                                                    userSession.getUserVideo() != null ?
+                                                            UserSessionSummaryResponse.UserVideoResponse
+                                                                    .builder()
+                                                                    .videoId(userSession.getUserVideo().getId())
+                                                                    .videoName(userSession.getUserVideo().getName())
+                                                                    .build()
+                                                            : null)
                                             .attempts(userSession.getAttempts())
                                             .build()
                             ).toList())

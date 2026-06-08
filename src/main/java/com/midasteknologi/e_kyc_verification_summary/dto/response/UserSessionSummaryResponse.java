@@ -17,7 +17,7 @@ public class UserSessionSummaryResponse {
 
     private UserDocumentResponse userDocumentResponse;
 
-    private UUID videoId;
+    private UserVideoResponse userVideoResponse;
 
     private String attempts;
 
@@ -32,5 +32,16 @@ public class UserSessionSummaryResponse {
         private String documentName;
 
         private String ocrData;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserVideoResponse {
+
+        private UUID videoId;
+
+        private String videoName;
     }
 }
