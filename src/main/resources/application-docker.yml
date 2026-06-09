@@ -5,7 +5,7 @@ server:
 
 config:
   python:
-    VideoDownloadUrl: http://localhost:8000
+    videoDownloadUrl: http://localhost:8000/video
 
 spring:
   application:
@@ -64,10 +64,6 @@ logging:
 rest:
   config:
     timeout-millis: 30000
-
-python:
-  service:
-    url: http://python-service:8000
 
 
 springdoc:

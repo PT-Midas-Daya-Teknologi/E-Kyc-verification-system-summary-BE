@@ -5,7 +5,7 @@ server:
 
 config:
   python:
-    VideoDownloadUrl: http://localhost:8000
+    videoDownloadUrl: http://localhost:8000/video
 
 spring:
   application:
@@ -65,13 +65,6 @@ rest:
   config:
     timeout-millis: 30000
 
-python:
-  service:
-    url: http://localhost:8000
-  api-docs:
-    enabled: true
-  swagger-ui:
-    enabled: false
 
 ---
 environment: dev

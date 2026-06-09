@@ -13,5 +13,5 @@ import org.springframework.validation.annotation.Validated;
 public class PythonServiceConfig {
 
     @NotBlank
-    private String VideoDownloadUrl;
+    private String videoDownloadUrl;
 }
