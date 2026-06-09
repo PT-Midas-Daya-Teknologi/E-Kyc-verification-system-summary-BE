@@ -1,11 +1,5 @@
 package com.midasteknologi.e_kyc_verification_summary.config;
 
-import java.util.List;
-
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.validation.annotation.Validated;
-
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -13,6 +7,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.validation.annotation.Validated;
+
+import java.util.List;
 
 @Data
 @Validated
@@ -37,6 +36,10 @@ public class EKycVerificationSummaryConfig {
     @Valid
     @NotNull
     private CorsConfig corsConfig;
+
+    @Valid
+    @NotNull
+    private PythonServiceConfig pythonServiceConfig;
 
     @Data
     public static class JwtConfig {
@@ -67,5 +70,12 @@ public class EKycVerificationSummaryConfig {
         @NotNull
         @Positive
         private Long maxAge;
+    }
+
+    @Data
+    public static class PythonServiceConfig {
+
+        @NotBlank
+        private String videoDownloadUrl;
     }
 }

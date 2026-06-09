@@ -3,10 +3,6 @@ server:
     context-path: /openapi/dev
   port: 8080
 
-config:
-  python:
-    videoDownloadUrl: http://localhost:8000/video
-
 spring:
   application:
     name: e-kyc-verification-summary
@@ -64,7 +60,6 @@ logging:
 rest:
   config:
     timeout-millis: 30000
-
 
 springdoc:
   api-docs:
@@ -124,3 +119,6 @@ config:
     - "*"
     allowed-credentials: true
     max-age: 300
+  python-service-config:
+    base-url: http://python-service:80
+    videoDownloadUrl: ${python-service-config.base-url}/video

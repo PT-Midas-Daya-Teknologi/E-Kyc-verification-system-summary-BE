@@ -1,13 +1,12 @@
 package com.midasteknologi.e_kyc_verification_summary.service.impl;
 
-import com.midasteknologi.e_kyc_verification_summary.config.PythonServiceConfig;
+import com.midasteknologi.e_kyc_verification_summary.config.EKycVerificationSummaryConfig;
 import com.midasteknologi.e_kyc_verification_summary.exception.CustomException;
 import com.midasteknologi.e_kyc_verification_summary.service.VideoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 public class VideoServiceImpl implements VideoService {
 
     private final WebClient webClient;
-    private final PythonServiceConfig pythonServiceConfig;
+    private final EKycVerificationSummaryConfig eKycVerificationSummaryConfig;
 
     @Override
     public ResponseEntity<?> getVideo(String videoId) throws CustomException {
@@ -34,7 +33,7 @@ public class VideoServiceImpl implements VideoService {
             // Call the Python backend
             byte[] videoData = webClient
                     .post()
-                    .uri(pythonServiceConfig.getVideoDownloadUrl() + "/video")
+                    .uri(eKycVerificationSummaryConfig.getPythonServiceConfig().getVideoDownloadUrl())
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(BodyInserters.fromValue(requestBody))
                     .retrieve()
