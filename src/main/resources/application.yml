@@ -3,6 +3,10 @@ server:
     context-path: /openapi/dev
   port: 8081
 
+config:
+  python:
+    url: http://localhost:8000
+
 spring:
   application:
     name: e-kyc-verification-summary
