@@ -37,6 +37,10 @@ public class EKycVerificationSummaryConfig {
     @NotNull
     private CorsConfig corsConfig;
 
+    @Valid
+    @NotNull
+    private PythonServiceConfig pythonServiceConfig;
+
     @Data
     public static class JwtConfig {
 
@@ -66,5 +70,12 @@ public class EKycVerificationSummaryConfig {
         @NotNull
         @Positive
         private Long maxAge;
+    }
+
+    @Data
+    public static class PythonServiceConfig {
+
+        @NotBlank
+        private String videoDownloadUrl;
     }
 }

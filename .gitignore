@@ -35,3 +35,4 @@ build/
 logs
 bin/
 *.class
+/.apt_generated_tests/
