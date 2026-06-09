@@ -5,7 +5,7 @@ server:
 
 config:
   python:
-    url: http://localhost:8000
+    VideoDownloadUrl: http://localhost:8000
 
 spring:
   application:
