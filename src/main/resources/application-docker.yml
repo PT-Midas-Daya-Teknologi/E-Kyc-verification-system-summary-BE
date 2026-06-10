@@ -121,4 +121,4 @@ config:
     max-age: 300
   python-service-config:
     base-url: http://python-service:80
-    videoDownloadUrl: ${python-service-config.base-url}/video
+    videoDownloadUrl: ${config.python-service-config.base-url}/video

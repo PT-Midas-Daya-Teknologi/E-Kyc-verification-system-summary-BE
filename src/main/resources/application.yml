@@ -15,7 +15,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
-    password: root
+    password: postgres
     schema: public
     driver-class-name: org.postgresql.Driver
     type: org.apache.tomcat.jdbc.pool.DataSource
@@ -36,9 +36,6 @@ spring:
   jpa:
     timeout-sec: 30
     generate-ddl: false
-#  jackson:
-#    serialization:
-#      write-dates-as-timestamps: false
 
 logging:
   pattern:
@@ -121,4 +118,4 @@ config:
     max-age: 300
   python-service-config:
     base-url: http://localhost:8000
-    videoDownloadUrl: ${python-service-config.base-url}/video
+    videoDownloadUrl: ${config.python-service-config.base-url}/video

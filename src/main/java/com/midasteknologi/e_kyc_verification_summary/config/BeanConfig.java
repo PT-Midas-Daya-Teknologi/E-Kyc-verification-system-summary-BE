@@ -28,7 +28,10 @@ public class BeanConfig {
 
     @Bean
     public WebClient webClient() {
-        return WebClient.builder().build();
+        return WebClient
+                .builder()
+                .codecs(clientCodecConfigurer -> clientCodecConfigurer.defaultCodecs().maxInMemorySize(16 * 1024 * 1024))
+                .build();
     }
 
     @Bean
