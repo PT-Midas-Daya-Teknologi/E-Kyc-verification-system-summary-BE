@@ -28,7 +28,7 @@ public class UserSession {
     private UserDocument userDocument;
 
     @OneToOne()
-    @JoinColumn(name = "videoId")
+    @JoinColumn(name = "video_id")
     private UserVideo userVideo;
 
     @JdbcTypeCode(SqlTypes.JSON)
