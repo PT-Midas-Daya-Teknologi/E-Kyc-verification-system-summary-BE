@@ -31,6 +31,10 @@ public class UserSession {
     @JoinColumn(name = "video_id")
     private UserVideo userVideo;
 
+    @OneToOne()
+    @JoinColumn(name = "audio_id")
+    private UserAudio userAudio;
+
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "json")
     private String attempts;

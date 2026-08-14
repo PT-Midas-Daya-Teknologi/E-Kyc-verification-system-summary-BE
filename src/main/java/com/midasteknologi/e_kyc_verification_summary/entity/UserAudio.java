@@ -18,16 +18,18 @@ import java.util.UUID;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "user_video")
-public class UserVideo extends BaseEntity {
+@Table(name = "user_audio")
+public class UserAudio extends BaseEntity {
 
     @Id
     private UUID id;
 
+    @Column(name = "name")
     private String name;
 
     @Column(name = "path")
     private String path;
 
+    @Column(name = "is_active")
     private Boolean isActive;
 }

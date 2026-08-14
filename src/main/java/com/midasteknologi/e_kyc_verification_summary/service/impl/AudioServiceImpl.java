@@ -1,9 +1,11 @@
 package com.midasteknologi.e_kyc_verification_summary.service.impl;
 
 import com.midasteknologi.e_kyc_verification_summary.dto.response.AudioResponse;
-import com.midasteknologi.e_kyc_verification_summary.entity.UserVideo;
+import com.midasteknologi.e_kyc_verification_summary.entity.UserAudio;
+import com.midasteknologi.e_kyc_verification_summary.entity.UserSession;
 import com.midasteknologi.e_kyc_verification_summary.exception.CustomException;
-import com.midasteknologi.e_kyc_verification_summary.repository.UserVideoRepository;
+import com.midasteknologi.e_kyc_verification_summary.repository.UserAudioRepository;
+import com.midasteknologi.e_kyc_verification_summary.repository.UserSessionRepository;
 import com.midasteknologi.e_kyc_verification_summary.service.AudioService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +31,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AudioServiceImpl implements AudioService {
 
-    private final UserVideoRepository userVideoRepository;
+    private final UserSessionRepository userSessionRepository;
+    private final UserAudioRepository userAudioRepository;
 
     @Override
     public AudioResponse getAudioPath(String videoId) throws CustomException {
@@ -44,20 +47,28 @@ public class AudioServiceImpl implements AudioService {
                 throw new CustomException("400", "Invalid video ID format", "BadRequest");
             }
 
-            Optional<UserVideo> optionalUserVideo = userVideoRepository.findById(videoUuid);
-            if (optionalUserVideo.isEmpty()) {
-                log.warn("No video record found for ID: {}", videoId);
-                throw new CustomException("404", "No video record found", "NotFound");
+            // Step 1: Find the session by video_id
+            UserSession userSession = userSessionRepository.findByUserVideoId(videoUuid);
+            if (userSession == null) {
+                log.warn("No session record found with video_id: {}", videoId);
+                throw new CustomException("404", "No session record found", "NotFound");
             }
 
-            UserVideo userVideo = optionalUserVideo.get();
-            if (userVideo.getAudioPath() == null || userVideo.getAudioPath().isBlank()) {
-                log.warn("Video record found but no audio path is stored for ID: {}", videoId);
+            // Step 2: Get the audio_id from the session
+            if (userSession.getUserAudio() == null || userSession.getUserAudio().getId() == null) {
+                log.warn("Session found but no audio_id is stored for video ID: {}", videoId);
+                throw new CustomException("404", "No audio record found", "NotFound");
+            }
+
+            // Step 3: Fetch the audio record
+            UserAudio userAudio = userAudioRepository.findById(userSession.getUserAudio().getId()).orElse(null);
+            if (userAudio == null || userAudio.getPath() == null || userAudio.getPath().isBlank()) {
+                log.warn("Audio record found but no path is stored for video ID: {}", videoId);
                 throw new CustomException("404", "No audio path found", "NotFound");
             }
 
             log.info("Successfully loaded audio path from database for video ID: {}", videoId);
-            return AudioResponse.builder().audioPath(userVideo.getAudioPath()).build();
+            return AudioResponse.builder().audioPath(userAudio.getPath()).build();
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
@@ -69,29 +80,38 @@ public class AudioServiceImpl implements AudioService {
     @Override
     public ResponseEntity<?> getAudioFile(String videoId, String rangeHeader) throws CustomException {
         try {
-            log.info("Fetching audio file with ID: {}", videoId);
+            log.info("Fetching audio file with video ID: {}", videoId);
 
             UUID videoUuid;
             try {
                 videoUuid = UUID.fromString(videoId);
             } catch (IllegalArgumentException ex) {
-                log.warn("Invalid audio ID format: {}", videoId);
+                log.warn("Invalid video ID format: {}", videoId);
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
 
-            Optional<UserVideo> optionalUserVideo = userVideoRepository.findById(videoUuid);
-            if (optionalUserVideo.isEmpty()) {
-                log.warn("No audio record found for ID: {}", videoId);
+            // Step 1: Find the session by video_id
+            UserSession userSession = userSessionRepository.findByUserVideoId(videoUuid);
+            if (userSession == null) {
+                log.warn("No session record found with video_id: {}", videoId);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
 
-            UserVideo userVideo = optionalUserVideo.get();
-            if (userVideo.getAudioPath() == null || userVideo.getAudioPath().isBlank()) {
-                log.warn("Audio record found but no file path is stored for ID: {}", videoId);
+            // Step 2: Get the audio_id from the session
+            if (userSession.getUserAudio() == null || userSession.getUserAudio().getId() == null) {
+                log.warn("Session found but no audio_id is stored for video ID: {}", videoId);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
 
-            Path audioPath = Paths.get(userVideo.getAudioPath());
+            // Step 3: Fetch the audio record
+            UserAudio userAudio = userAudioRepository.findById(userSession.getUserAudio().getId()).orElse(null);
+            if (userAudio == null || userAudio.getPath() == null || userAudio.getPath().isBlank()) {
+                log.warn("Audio record found but no path is stored for video ID: {}", videoId);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+            // Step 4: Read the audio file from the path
+            Path audioPath = Paths.get(userAudio.getPath());
             if (!Files.exists(audioPath) || !Files.isRegularFile(audioPath)) {
                 log.warn("Audio file not found at path: {}", audioPath);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -102,11 +122,12 @@ public class AudioServiceImpl implements AudioService {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
 
+            // Step 5: Resolve media type and build response with byte-range support
             MediaType mediaType = resolveAudioMediaType(audioPath);
             log.info("Successfully loaded audio from database path, size: {} bytes, mediaType: {}", audioData.length, mediaType);
             return buildAudioResponse(audioData, mediaType, audioData.length, rangeHeader);
         } catch (IOException e) {
-            log.error("Error reading audio file for ID {}: {}", videoId, e.getMessage(), e);
+            log.error("Error reading audio file for video ID {}: {}", videoId, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (Exception e) {
             log.error("Error in getAudioFile: {}", e.getMessage(), e);
