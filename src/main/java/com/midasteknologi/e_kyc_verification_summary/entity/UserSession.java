@@ -31,9 +31,22 @@ public class UserSession {
     @JoinColumn(name = "video_id")
     private UserVideo userVideo;
 
+    @OneToOne()
+    @JoinColumn(name = "audio_id")
+    private UserAudio userAudio;
+
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "json")
     private String attempts;
+
+    @Column(name = "session_name")
+    private String sessionName;
+
+    @Column(name = "status")
+    private String status;
+
+    @Column(name = "reason")
+    private String reason;
 
     private LocalDateTime sessionExpiry;
 

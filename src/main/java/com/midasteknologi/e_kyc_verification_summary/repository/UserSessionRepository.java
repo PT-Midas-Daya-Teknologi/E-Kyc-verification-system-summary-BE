@@ -6,8 +6,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.UUID;
+
 @Repository
-public interface UserSessionRepository extends JpaRepository<UserSession, String>  {
+public interface UserSessionRepository extends JpaRepository<UserSession, UUID>  {
 
     Page<UserSession> findAllByUserId(Long userId, Pageable pageable);
+    
+    UserSession findByUserVideoId(UUID videoId);
 }
