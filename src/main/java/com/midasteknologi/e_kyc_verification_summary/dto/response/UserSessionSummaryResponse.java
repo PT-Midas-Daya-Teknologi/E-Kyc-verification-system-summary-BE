@@ -15,6 +15,12 @@ public class UserSessionSummaryResponse {
 
     private UUID sessionId;
 
+    private String sessionName;
+
+    private String status;
+
+    private String reason;
+
     private UserDocumentResponse userDocumentResponse;
 
     private UserVideoResponse userVideoResponse;

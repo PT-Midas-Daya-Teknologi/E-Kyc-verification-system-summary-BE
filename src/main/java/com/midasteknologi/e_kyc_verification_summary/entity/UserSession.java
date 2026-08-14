@@ -35,6 +35,15 @@ public class UserSession {
     @Column(columnDefinition = "json")
     private String attempts;
 
+    @Column(name = "session_name")
+    private String sessionName;
+
+    @Column(name = "status")
+    private String status;
+
+    @Column(name = "reason")
+    private String reason;
+
     private LocalDateTime sessionExpiry;
 
     private Boolean isActive;

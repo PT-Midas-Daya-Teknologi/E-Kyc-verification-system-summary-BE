@@ -151,6 +151,9 @@ public class SummaryServiceImpl implements SummaryService {
                                     UserSessionSummaryResponse
                                             .builder()
                                             .sessionId(userSession.getId())
+                                            .sessionName(userSession.getSessionName())
+                                            .status(userSession.getStatus())
+                                            .reason(userSession.getReason())
                                             .userDocumentResponse(
                                                     userSession.getUserDocument() != null ?
                                                             UserSessionSummaryResponse.UserDocumentResponse

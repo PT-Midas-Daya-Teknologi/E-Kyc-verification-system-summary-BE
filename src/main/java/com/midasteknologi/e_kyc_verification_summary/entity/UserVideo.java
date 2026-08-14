@@ -1,5 +1,6 @@
 package com.midasteknologi.e_kyc_verification_summary.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -25,7 +26,11 @@ public class UserVideo extends BaseEntity {
 
     private String name;
 
+    @Column(name = "path")
     private String path;
+
+    @Column(name = "audio_path")
+    private String audioPath;
 
     private Boolean isActive;
 }
