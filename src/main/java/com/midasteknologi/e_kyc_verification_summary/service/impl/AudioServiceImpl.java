@@ -23,7 +23,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -111,7 +110,7 @@ public class AudioServiceImpl implements AudioService {
             }
 
             // Step 4: Read the audio file from the path
-            Path audioPath = Paths.get(userAudio.getPath());
+            Path audioPath = Paths.get(userAudio.getPath(), userAudio.getName());
             if (!Files.exists(audioPath) || !Files.isRegularFile(audioPath)) {
                 log.warn("Audio file not found at path: {}", audioPath);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

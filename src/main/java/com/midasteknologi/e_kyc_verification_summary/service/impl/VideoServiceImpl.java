@@ -1,14 +1,12 @@
 package com.midasteknologi.e_kyc_verification_summary.service.impl;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.UUID;
-
+import com.midasteknologi.e_kyc_verification_summary.config.EKycVerificationSummaryConfig;
+import com.midasteknologi.e_kyc_verification_summary.entity.UserVideo;
+import com.midasteknologi.e_kyc_verification_summary.exception.CustomException;
+import com.midasteknologi.e_kyc_verification_summary.repository.UserVideoRepository;
+import com.midasteknologi.e_kyc_verification_summary.service.VideoService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -22,14 +20,14 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-import com.midasteknologi.e_kyc_verification_summary.config.EKycVerificationSummaryConfig;
-import com.midasteknologi.e_kyc_verification_summary.entity.UserVideo;
-import com.midasteknologi.e_kyc_verification_summary.exception.CustomException;
-import com.midasteknologi.e_kyc_verification_summary.repository.UserVideoRepository;
-import com.midasteknologi.e_kyc_verification_summary.service.VideoService;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -65,7 +63,7 @@ public class VideoServiceImpl implements VideoService {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
 
-            Path videoPath = Paths.get(userVideo.getPath());
+            Path videoPath = Paths.get(userVideo.getPath(), userVideo.getName());
             if (!Files.exists(videoPath) || !Files.isRegularFile(videoPath)) {
                 log.warn("Video file not found at path: {}", videoPath);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
