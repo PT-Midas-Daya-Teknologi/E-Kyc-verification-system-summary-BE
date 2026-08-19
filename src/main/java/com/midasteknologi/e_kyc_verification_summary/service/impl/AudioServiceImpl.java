@@ -47,7 +47,10 @@ public class AudioServiceImpl implements AudioService {
             }
 
             // Step 1: Find the session by video_id
-            UserSession userSession = userSessionRepository.findByUserVideoId(videoUuid);
+            UserSession userSession = userSessionRepository.findByUserVideoId(videoUuid).stream()
+                    .filter(session -> session != null)
+                    .findFirst()
+                    .orElse(null);
             if (userSession == null) {
                 log.warn("No session record found with video_id: {}", videoId);
                 throw new CustomException("404", "No session record found", "NotFound");
@@ -90,7 +93,10 @@ public class AudioServiceImpl implements AudioService {
             }
 
             // Step 1: Find the session by video_id
-            UserSession userSession = userSessionRepository.findByUserVideoId(videoUuid);
+            UserSession userSession = userSessionRepository.findByUserVideoId(videoUuid).stream()
+                    .filter(session -> session != null)
+                    .findFirst()
+                    .orElse(null);
             if (userSession == null) {
                 log.warn("No session record found with video_id: {}", videoId);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

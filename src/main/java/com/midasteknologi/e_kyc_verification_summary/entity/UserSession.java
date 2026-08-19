@@ -7,10 +7,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
@@ -47,6 +50,20 @@ public class UserSession {
 
     @Column(name = "reason")
     private String reason;
+
+    @CreationTimestamp
+    @Column(name = "created_at")
+    private OffsetDateTime createdAt;
+
+    @Column(name = "created_by")
+    private String createdBy = "SYSTEM";
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private OffsetDateTime updatedAt;
+
+    @Column(name = "updated_by")
+    private String updatedBy = "SYSTEM";
 
     private LocalDateTime sessionExpiry;
 

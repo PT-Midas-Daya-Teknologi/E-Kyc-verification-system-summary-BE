@@ -135,7 +135,7 @@ public class SummaryServiceImpl implements SummaryService {
                     userSessionSummaryRequest.getSize()
             );
 
-            Page<UserSession> userSessionPage = userSessionRepository.findAllByUserId(userSessionSummaryRequest.getUserId(), pageable);
+            Page<UserSession> userSessionPage = userSessionRepository.findAllByUserIdOrderByCreatedAtDesc(userSessionSummaryRequest.getUserId(), pageable);
 
             log.info("Exiting getSummarySession()");
             return PaginatedResponse
@@ -154,6 +154,8 @@ public class SummaryServiceImpl implements SummaryService {
                                             .sessionName(userSession.getSessionName())
                                             .status(userSession.getStatus())
                                             .reason(userSession.getReason())
+                                            .createdAt(userSession.getCreatedAt())
+                                            .updatedAt(userSession.getUpdatedAt())
                                             .userDocumentResponse(
                                                     userSession.getUserDocument() != null ?
                                                             UserSessionSummaryResponse.UserDocumentResponse
