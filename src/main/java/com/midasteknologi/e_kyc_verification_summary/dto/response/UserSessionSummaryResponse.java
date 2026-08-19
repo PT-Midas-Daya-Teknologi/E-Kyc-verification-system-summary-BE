@@ -1,10 +1,12 @@
 package com.midasteknologi.e_kyc_verification_summary.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Data
@@ -20,6 +22,12 @@ public class UserSessionSummaryResponse {
     private String status;
 
     private String reason;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS Z")
+    private OffsetDateTime createdAt;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS Z")
+    private OffsetDateTime updatedAt;
 
     private UserDocumentResponse userDocumentResponse;
 

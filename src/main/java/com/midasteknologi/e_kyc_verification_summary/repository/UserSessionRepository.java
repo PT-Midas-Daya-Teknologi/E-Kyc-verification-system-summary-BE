@@ -11,7 +11,7 @@ import java.util.UUID;
 @Repository
 public interface UserSessionRepository extends JpaRepository<UserSession, UUID>  {
 
-    Page<UserSession> findAllByUserId(Long userId, Pageable pageable);
-    
-    UserSession findByUserVideoId(UUID videoId);
+    Page<UserSession> findAllByUserIdOrderByCreatedAtDesc(Long userId, Pageable pageable);
+
+    java.util.List<UserSession> findByUserVideoId(UUID videoId);
 }
